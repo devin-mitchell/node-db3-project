@@ -1,7 +1,11 @@
+const db = require('../../data/db-config')
+
 function find() { // EXERCISE A
   /*
     1A- Study the SQL query below running it in SQLite Studio against `data/schemes.db3`.
     What happens if we change from a LEFT join to an INNER join?
+
+      //when we change Left join to an Inner join, we loose the row, "Have fun!" because it has no steps.  
 
       SELECT
           sc.*,
@@ -15,6 +19,10 @@ function find() { // EXERCISE A
     2A- When you have a grasp on the query go ahead and build it in Knex.
     Return from this function the resulting dataset.
   */
+  db('schemes as sc')
+    .leftJoin('steps as st', 'sc.scheme_id', 'st.scheme_id')
+    .groupBy('sc.scheme_id')
+    .orderBy('sc.scheme_id')
 }
 
 function findById(scheme_id) { // EXERCISE B
@@ -29,11 +37,19 @@ function findById(scheme_id) { // EXERCISE B
           ON sc.scheme_id = st.scheme_id
       WHERE sc.scheme_id = 1
       ORDER BY st.step_number ASC;
-
+  */
+  db.select('sc.scheme_name', 'st.*')
+    .from('schemes as sc')
+    .leftJoin('steps as st', 'sc.scheme_id', 'st.scheme_id')
+    .where('sc.scheme_id', 'scheme_id')
+    .orderBy('st.step_number')
+  /*
     2B- When you have a grasp on the query go ahead and build it in Knex
     making it parametric: instead of a literal `1` you should use `scheme_id`.
-
-    3B- Test in Postman and see that the resulting data does not look like a scheme,
+  */
+    
+  /* 
+  3B- Test in Postman and see that the resulting data does not look like a scheme,
     but more like an array of steps each including scheme information:
 
       [
@@ -53,7 +69,9 @@ function findById(scheme_id) { // EXERCISE B
         },
         // etc
       ]
+  */
 
+  /*
     4B- Using the array obtained and vanilla JavaScript, create an object with
     the structure below, for the case _when steps exist_ for a given `scheme_id`:
 
@@ -73,8 +91,10 @@ function findById(scheme_id) { // EXERCISE B
           },
           // etc
         ]
-      }
+        }
+  */
 
+  /*
     5B- This is what the result should look like _if there are no steps_ for a `scheme_id`:
 
       {
